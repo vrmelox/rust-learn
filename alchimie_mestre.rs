@@ -1,4 +1,4 @@
-use std::io
+use std::io;
 
 fn afficher_recette(recettes: [(&str, Vec<&str>, u16);5]) {
     for recette in recettes {
@@ -8,14 +8,14 @@ fn afficher_recette(recettes: [(&str, Vec<&str>, u16);5]) {
 
 fn recettes_rapides(recettes: [(&str, Vec<&str>, u16);5], temps_max: u32) {
     for recette in recettes {
-        if recette.2 as u32 == temps_max {
+        if recette.2 as u32 <= temps_max {
             println!("{:?}", recette);
         }
     }
 }
 
 fn calculer_temps_total(recettes: [(&str, Vec<&str>, u16);5]) {
-    let total: u16 = 0;
+    let mut total: u16 = 0;
     for recette in recettes {
         total += recette.2;
     }
@@ -31,20 +31,34 @@ fn main() {
         ("Curry de lentilles", vec!["Lentilles", "Lait de coco", "Epinards", "Oignon", "Ail", "Curry en poudre"], 35),
         ("Poulet en miel", vec!["Cuisse de poulet", "Miel", "Lait de soja", "Ail", "Gingembre"], 20)
     ];
-    println!("Bienvenue sur les recettes du Gustomberi.");
-    println!("1.Afficher toutes les recettes.\n2.Recettes rapides.\n3.Calculer le temps total.")
-    let mut input = String::new();
-    println!("Entrez votre choix :");
-    io::stdin()
-        .read_line(&mut input)
-        .expect("Erreur de lecture");
 
-    let choix: u16 = input.trim().parse().expect("Entrez un nombre valide.");
+    loop {
+        println!("=========================================================");
+        println!("Bienvenue sur les recettes du Gustomberi.");
+        println!("1. Afficher toutes les recettes.\n2. Recettes rapides.\n3. Calculer le temps total.\n0. Quitter.");
+        let mut input = String::new();
+        println!("Entrez votre choix :");
+        io::stdin()
+            .read_line(&mut input)
+            .expect("Erreur de lecture");
 
-    match choix {
-        1 => afficher_recette(recettes),
-        2 => recettes_rapides(recettes, 25),
-        2 => calculer_temps_total(recettes),
-        _= afficher_recette(recettes), 
+        let choix: u16 = match input.trim().parse() {
+            Ok(num) => num,
+            Err(_) => {
+                println!("Erreur: Entre un nombre valide.");
+                continue;
+            }
+        };
+
+        match choix {
+            0 => {
+                println!("Au revoir !");
+                break;
+            }
+            1 => afficher_recette(&recettes),
+            2 => recettes_rapides(&recettes, 25),
+            3 => calculer_temps_total(&recettes),
+            _=> println!("Choix erroné. Veuillez choisir entre 0 et 3."), 
+        }
     }
 }
